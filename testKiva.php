@@ -25,7 +25,7 @@ else echo "Loan_lender_repayment_schedule record insertion failed.\n\n";
 $details = array('loan_lender_repayments_schedule_id' => 1, 'lender_id' => '1', 'amount' => 25.00);
 if ($expected_llr_id = $dbs->createLoanLenderRepayments($details)) echo "\n\nInserted loan_lender_repayments record: " . $expected_llr_id . "\n\n";
 else echo "Loan_lender_repayments record insertion failed.\n\n";
-*/
+
 
 // Test loan_lender_repayments data integrity (lender gets expected scheduled repayments for a loan).
 $details = array('loan_lender_repayments_schedule_id' => 1, 'lender_id' => '1', 'active' => 1, 'expected_amount' => 25.00);
@@ -37,3 +37,10 @@ if ($loan_repayments_amount = $dbs->selectLoanLenderRepayments($details)) {
 } else {
     echo "Loan_lender_repayments record insertion failed.\n\n";
 }
+*/
+$test->curlKivaFundedLoansApi('http://api.kivaws.org/v1/loans/search.json?status=funded');
+$test->setCurrentLoan();
+$test->curlKivaCurrentLoanDetailsApi();
+$test->curlKivaCurrentLoanLendersApi();
+$test->createFundedLoanRecord();
+$test->createFundedLoanLendersRepaymentScheduleRecord();

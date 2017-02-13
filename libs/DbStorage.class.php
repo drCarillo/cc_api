@@ -1,7 +1,4 @@
 <?php
-/**
-* No autoload or namespace for simplicity in this exercise.
-*/
 require_once('Storage.class.php');
 
 /**
@@ -68,7 +65,7 @@ class DbStorage implements Storage
 		$id 	= null;
 		$sql 	= "INSERT INTO loans (loan_id, loan_amount, repayment_term, posted_date, date_recorded, status, active) VALUES (?, ?, ?, ?, NOW(), ?, ?)";
 		$query  = $this->pdo->prepare($sql);
-		$query->execute(array($loan['loan_id'], $loan['loan_amount'], $loan['repayment_term'], $loan['repayment_term'], $loan['status'], 1));
+		$query->execute(array($loan['loan_id'], $loan['loan_amount'], $loan['repayment_term'], $loan['posted_date'], $loan['status'], 1));
 		
 		if ($query) {
 		    return $id = $this->pdo->lastInsertId();
