@@ -8,7 +8,7 @@ require_once('./libs/KivaLoanApiExample.class.php');
 $dbs  = new DBstorage(); // Database object
 $test = new KivaLoanApiExample($dbs); // Kiva API example object
 
-/*
+
 // Test loan record insertion
 $loan = array('loan_id' => 123456, 'loan_amount' => 100.00, 'repayment_term' => 6, 'posted_date' => "NOW()", 'status' => 'funded');
 if ($expected_loan_id = $dbs->createLoan($loan)) echo "\n\nInserted expected loan record: " . $expected_loan_id . "\n\n";
@@ -37,10 +37,43 @@ if ($loan_repayments_amount = $dbs->selectLoanLenderRepayments($details)) {
 } else {
     echo "Loan_lender_repayments record insertion failed.\n\n";
 }
-*/
+
+// Test API returned JSON and decoded into an array
 $test->curlKivaFundedLoansApi('http://api.kivaws.org/v1/loans/search.json?status=funded');
+$is_funded_loan_array = $test->getFundedLoans();
+if (!empty($is_funded_loan_array) && is_array($is_funded_loan_array)) {
+    echo "\n\ncurlKivaFundedLoansApi() test: PASSED\n\n";
+} else {
+    echo "\n\ncurlKivaFundedLoansApi() test: FAILED\n\n";
+}
+
+// Make sure we have picked a loan
 $test->setCurrentLoan();
+$is_current_loan_array = $test->getCurrentLoan();
+if (!empty($is_current_loan_array) && is_array($is_current_loan_array)) {
+    echo "\n\nsetCurrentLoan() test: PASSED\n\n";
+} else {
+    echo "\n\nsetCurrentLoan() test: FAILED\n\n";
+}
+
+// Test API returned JSON and decoded into an array
 $test->curlKivaCurrentLoanDetailsApi();
+$is_current_loan_details_array = $test->getCurrentLoanDetails();
+if (!empty($is_current_loan_details_array) && is_array($is_current_loan_details_array)) {
+    echo "\n\ncurlKivaCurrentLoanDetailsApi() test: PASSED\n\n";
+} else {
+    echo "\n\ncurlKivaCurrentLoanDetailsApi() test: FAILED\n\n";
+}
+
+// Test API returned JSON and decoded into an array
 $test->curlKivaCurrentLoanLendersApi();
+$is_current_loan_lenders_array = $test->getCurrentLoanLender();
+if (!empty($is_current_loan_lenders_array) && is_array($is_current_loan_lenders_array)) {
+    echo "\n\ncurlKivaCurrentLoanLendersApi() test: PASSED\n\n";
+} else {
+    echo "\n\ncurlKivaCurrentLoanLendersApi() test: FAILED\n\n";
+}
+
 $test->createFundedLoanRecord();
+
 $test->createFundedLoanLendersRepaymentScheduleRecord();

@@ -49,6 +49,13 @@ class KivaLoanApiExample
     protected $current_loan_lenders;
     
     /**
+    * THe loan schedule id for each lender to use in payments (repaments table).
+    *
+    * @var array $current_loan_lender_schedule_ids
+    */
+    protected $current_loan_lender_schedule_ids;
+    
+    /**
     * The loan id record from the db or storage used here.
     *
     * @var integer $current_loan_record_id
@@ -239,6 +246,29 @@ class KivaLoanApiExample
     }
     
     /**
+    * Create a funded loan lenders repayments from borrower distributed equally.
+    * Assuming one payment as there was no payment schedule for loan.
+    *
+    * @return boolean true on success
+    */
+    public function createFundedLoanLendersRepaymentRecord()
+    {
+        if (!empty($this->current_loan_lender_schedule_ids)) {
+            foreach($this->current_loan_lender_schedule_ids as $schedule_id) {
+                $loan = array('loan_lender_repayments_schedule_id' => $schedule_id,
+                              'amount' => $this->currentLoanRepaymentExpectedAmount
+                        );
+                    
+                if(!$this->db->createLoanLenderRepayments($loan)) return false;
+            }
+            
+            return true;
+        }
+        
+        return false;  // oops?
+    }
+    
+    /**
     * Setter JSON decode method for funded loans.
     *
     * @param string $api_funded_loans
@@ -250,6 +280,20 @@ class KivaLoanApiExample
         if (!empty($api_funded_loans)) {
             $this->funded_loans = json_decode($api_funded_loans, true);
             return true;
+        }
+        
+        return false;  // something went wrong: shouldn't get here
+    }
+    
+    /**
+    * Get the funded loan list from the API.
+    *
+    * @return array $this->funded_loans on success
+    */
+    public function getFundedLoans()
+    {
+        if (!empty($this->funded_loans)) {
+            return $this->funded_loans;
         }
         
         return false;  // something went wrong: shouldn't get here
@@ -269,6 +313,20 @@ class KivaLoanApiExample
         }
         
         return false; // something went wrong: shouldn't get here
+    }
+    
+    /**
+    * Get the current funded loan.
+    *
+    * @return array $this->current_loan on success
+    */
+    public function getCurrentLoan()
+    {
+        if (!empty($this->current_loan)) {
+            return $this->current_loan;
+        }
+        
+        return false;  // something went wrong: shouldn't get here
     }
     
     /**
@@ -297,12 +355,24 @@ class KivaLoanApiExample
     {
         if (!empty($funded_loan_details)) {
             $this->current_loan_details = json_decode($funded_loan_details, true);
-            //var_dump($this->current_loan_details['loans'][0]['terms']['repayment_term']); exit;
-            //var_dump($this->current_loan_details['loans'][0]); exit;
             return true;
         }
         
         return false;  // something went wrong
+    }
+    
+    /**
+    * Get the current funded loan details.
+    *
+    * @return array $current_loan_details on success
+    */
+    public function getCurrentLoanDetails()
+    {
+        if (!empty($this->current_loan_details)) {
+            return $this->current_loan_details;
+        }
+        
+        return false;  // something went wrong: shouldn't get here
     }
     
     /**
@@ -352,11 +422,24 @@ class KivaLoanApiExample
     {
         if (!empty($funded_loan_lenders)) {
             $this->funded_loan_lenders = json_decode($funded_loan_lenders, true);
-            print_r($this->funded_loan_lenders); exit;
             return true;
         }
         
         return false;  // something went wrong
+    }
+    
+    /**
+    * Get the current funded loan lenders.
+    *
+    * @return array $funded_loan_lenders on success
+    */
+    public function getCurrentLoanLender()
+    {
+        if (!empty($this->funded_loan_lenders)) {
+            return $this->funded_loan_lenders;
+        }
+        
+        return false;  // something went wrong: shouldn't get here
     }
     
     public function __destruct() {}

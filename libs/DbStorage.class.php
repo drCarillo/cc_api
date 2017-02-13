@@ -111,9 +111,9 @@ class DbStorage implements Storage
 	{
 		// prepare
 		$id 	= null;
-		$sql 	= "INSERT INTO loan_lender_repayments (loan_lender_repayments_schedule_id, lender_id, amount, date_posted, active) VALUES (?, ?, ?, NOW(), ?)";
+		$sql 	= "INSERT INTO loan_lender_repayments (loan_lender_repayments_schedule_id, amount, date_posted, active) VALUES (?, ?, NOW(), ?)";
 		$query  = $this->pdo->prepare($sql);
-		$query->execute(array($details['loan_lender_repayments_schedule_id'], $details['lender_id'], $details['amount'], 1));
+		$query->execute(array($details['loan_lender_repayments_schedule_id'], $details['amount'], 1));
 		
 		if ($query) {
 		    return $id = $this->pdo->lastInsertId();
